@@ -1,0 +1,28 @@
+[
+  {
+       "name": "kmsCollection",
+       "policy": "OR('org1MSP.member', 'org2MSP.member')",
+       "requiredPeerCount": 2,
+       "maxPeerCount": 2,
+       "blockToLive": 0,
+       "memberOnlyRead": true
+  },
+
+  {
+       "name": "op1PrivateKmsCollection",
+       "policy": "OR('org1MSP.member')",
+       "requiredPeerCount": 1,
+       "maxPeerCount": 1,
+       "blockToLive": 0,
+       "memberOnlyRead": true
+  },
+
+  {
+       "name": "op2PrivateKmsCollection",
+       "policy": "OR('org2MSP.member')",
+       "requiredPeerCount": 1,
+       "maxPeerCount": 1,
+       "blockToLive": 0,
+       "memberOnlyRead": true
+  }
+]

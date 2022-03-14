@@ -1,0 +1,38 @@
+version: '3.4'
+
+services:
+  carpooling-rest-api1:
+    container_name: carpooling_lce_1
+    image: carpooling_lce
+    build:
+      context: .
+      dockerfile: Dockerfile_local
+    command: [ "pm2-runtime", "start", "/var/app/ecosystem.config.js", "--only", "carpooling_docker"]
+    volumes:
+    #  - creds:/var/app/src/config/creds
+      - ./.env_org1:/var/app/.env
+      - /tmp/hyperledger-fabric-network:/tmp/hyperledger-fabric-network
+    ports:
+      - "4000:4000"
+    env_file:
+      - .env_org1
+    restart: on-failure
+    networks:
+      - bnc_network
+
+  carpooling_mongodb1:
+    container_name: carpooling_mongodb_1
+    image: mongo
+    ports:
+      - "27017:27017"
+    networks:
+      - bnc_network
+
+#volumes:
+#  creds:
+
+networks:
+  bnc_network:
+    external:
+      name: bnc_network
+

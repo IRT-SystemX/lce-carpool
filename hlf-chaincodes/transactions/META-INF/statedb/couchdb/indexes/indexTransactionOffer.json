@@ -1,0 +1,8 @@
+{
+  "index":{
+    "fields":["docType", "idTrip"]
+  },
+  "ddoc":"indexTransactionOfferDoc",
+  "name":"indexTransactionOffer",
+  "type":"json"
+}

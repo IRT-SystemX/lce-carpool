@@ -1,0 +1,8 @@
+{
+  "index":{
+    "fields":["docType", "geohashDeparture", "geohashArrival", "date"]
+  },
+  "ddoc":"indexGeoHashDoc",
+  "name":"indexGeoHash",
+  "type":"json"
+}

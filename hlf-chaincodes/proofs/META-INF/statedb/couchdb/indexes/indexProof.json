@@ -1,0 +1,8 @@
+{
+  "index":{
+    "fields":["docType", "idProof"]
+  },
+  "ddoc":"indexProofDoc",
+  "name":"indexProof",
+  "type":"json"
+}

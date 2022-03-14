@@ -1,0 +1,798 @@
+swagger: "2.0"
+info:
+  version: "0.9"
+  title: Carpooling platform API
+# during dev, should point to your local machine
+host: localhost:4000
+# basePath prefixes all resource paths 
+basePath: /api/v1
+# 
+schemes:
+  # tip: remove http to make production-grade
+  - http
+  - https
+# format of bodies a client can send (Content-Type)
+consumes:
+  - application/json
+# format of the responses to the client (Accepts)
+produces:
+  - application/json
+securityDefinitions:
+  Bearer:
+    type: apiKey
+    name: Authorization
+    in: header
+paths:
+  /auth/login:
+    post:
+      description: Athentication with username and idOperator
+      operationId: Athentication
+      parameters:
+        - in: body
+          name: user
+          required: true
+          schema:
+            example:
+              {
+                "username": "Alice",
+                "idOperator": "op1"
+              }  
+      responses:
+        "200":
+          description: OK
+          schema:
+            example:
+              value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InBlM0tJIiwiaWRPcGVyYXRvciI6ImlkdnJvb20iLCJpYXQiOjE1NTQ4MTY2MjMsImV4cCI6MTU2MDAwMDYyM30.hoR_Yf9PcX8jH_TM_P0TLuVz3wYDFFB37iiTjfXUTgA
+              exp: 1560000623
+              iat: 1554816623
+              
+        
+  /offer:
+    post:
+      description: Create new offer(s)
+      # used as the method name of the controller
+      operationId: createOffer
+      consumes:
+        - application/json
+      security:
+        - Bearer: []
+      parameters:
+        - in: body
+          name: offer
+          required: true
+          description: A JSON object containing offers
+          schema:
+            type: array
+            items: 
+              $ref: "#/definitions/OfferDetailed"
+            example:
+              { 
+                "offers": [
+                  {
+                    "idOffer": "1",
+                    "idDriver": "739139",
+                    "idOperator": "op1",
+                    "driverShortname": "Bob",
+                    "origin": "10 Allée du Vieux Chene, 69380 Lissieu",
+                    "destination": "5 Avenue Tony Garnier 69000 Lyon",
+                    "departureGPS": "45.843384,4.743948",
+                    "arrivalGPS": "45.730942,4.823909",
+                    "date": "2019-03-20T14:20:00Z",
+                    "price": 1.2,
+                    "availableSeats": 3,
+                    "driver": {
+                       "photo": "https://api.op1.com/image/132279.jpeg",
+                       "age": 35,
+                       "note": 4,
+                       "identityVerified": true,
+                       "phoneVerified": true,
+                       "emailVerified": true,
+                       "lang" : ["English","French"]
+                    },
+                    "vehicle": {
+                       "photo": "https://api.op1.com/image/xxx.jpeg",
+                       "brand": "Renault",
+                       "model": "Clio",
+                       "color": "Red",
+                       "availableSeats": 3
+                    },
+                    "trip": {
+                       "distance": 17397,
+                       "duration": "1:20:20",
+                       "hasHighways": false,
+                       "departure": {
+                         "type": "Feature",
+                         "geometry": {
+                           "type": "Point",
+                           "coordinates": [
+                             4.743948,
+                             45.843384
+                           ]
+                         },
+                         "properties": {
+                            "country": "France",
+                            "macroregion": "Auvergne-Rhône-Alpes",
+                            "locality": "Lyon",
+                            "country_a": "FRA"
+                         }
+                       },
+                       "arrival": {
+                         "type": "Feature",
+                         "geometry": {
+                           "type": "Point",
+                           "coordinates": [
+                             4.823909,
+                             45.730942
+                             ]
+                         },
+                         "properties":{
+                           "country": "France",
+                           "macroregion": "Auvergne-Rhône-Alpes",
+                           "locality": "Lyon",
+                           "country_a": "FRA"
+                         }
+                       },
+                       "path": "g_mvAaaqHhBi@lJmCHsApB{BjAsAhCaJ{@u@{FyFcLyT}EaFuJiDqLBsLtHkUlY_DtDyCjDoSxPsK~CFtFFlI{AnQkAvJgD|RoCxIuFpMqBtF{@pDWhF^lFjAfEHrUzEnPjQhd@lOrZSv\\~Rje@dOdSdUPhR|OdUvIrKjFdJrBbQp@tPv@lEd@jFQpHcBhQkGvD}@dJmBzFwBrF[lJd@hM|JpHtJpGzKjA~Nm@tEsApEqBnFqBnEwD|GcAb@{Ai@yBm@kA_@iBy@mAq@yAqB{A}Cu@eBe@cBGoCViCLkBd@wD|@wFCyH|D}P~tC{gHdJqT~b@ifAvHwQnh@spARce@~Sa@~Wca@xg@qp@~_BcyBp\\ka@~]i^X_SvSoKb[sOx[oPr[yTnXgWrVwZhMmRti@az@dYkb@tP{TlOwSrKuNhMgSlOg\\~Mm_@dUer@fOka@HsSjFcRnDeQ~BcM~Du]rAyU?cWeA_N?uHbB}IrAuBbAkDVgEOmC|@uFB_EC{BhBmAfTkN~NcMj@cS|YaJtpBed@|}@eT|@_Nfc@mStmAmWdaB{]~zFyoAh~Cut@tnDqw@dK}Db@aK|@gKb@{NdZkMnRoLhb@wV|TcQj[aYn]s\\dnAsoAvgDmkDf}@k_ApR_RbG_GluCoyCh{@mz@xQ_PxRuO~MgKRuMnX{Pp]qR~b@cThv@k[j@cO~]wMxe@oS|t@eXnReGxRuEbQmCfSoAfTPdOx@SpC|IjBnIxBnH~BfIpDxMnGzK~GzKlIzKfK|J|JlgAloAjGtHb@hd@hRfQbKhIlK~GvMpHfNrF~InCpLDbQzB|OAnNJlOe@~R{B|UaFnR{GjLsGpGiEdU_QlJeMdUcVdj@wn@zi@qn@fTuV|TcXrZm@~b@gp@xLoTdKiT|Os]tJaUl@u~@pQ_c@zt@{gBpBsFtKsXjPk_@pRs_@rUib@zV_b@zuDq~Gfb@aw@rQ}]pQw]zV}d@vWoe@tFiKb_AwyAtIgN~DcHzAsCz_@q@hAirBhHyWl~@aiDhRoe@je@kkAheAebBtTk]vaB_jCdTg]taBajClJiOhHeJ|Zo@iBskBnSyVhReVdE_H|EgLlZcdA~Ho\\|DoSdEwVdK}j@rAcFxBsHjAoCpH_QlEyMbAaFbz@{tDH_UjFqLpWoe@HkMnDsFtDoCrB}@tDg@hCCdE|@hCfAbFpDxHdHbFbGpHHxLpJvXlTx`VvWrSto@zi@|vOneMbBjAjFpLtEbFbQvTr@jY|YjVnDhChRvQbQpOjAeElEaPbAwFdAeJlEgc@jo@goDd@{BvI{f@nHsWxH}^d@{DbAcDxBuBr[b@jGi@z@_AjFcBt@QNAxA?zABr[t@dt@z@~CBfILxL\\vw@lClJRbGFHL~M}CzA[MeI|IcHx{@mt@pCeFpB}FnCcNd@cGN}FGov@?_D?mIM}LeAedBMoZOeR]}h@?yDGsHGyTiGcDTdTGpNFlNt@rfCL`O"
+                    }
+                  }
+                ]              
+              }                  
+           
+      responses:
+        "201":
+          description: Created
+    get:
+      description: Search an offer, returns list of offers
+      # used as the method name of the controller
+      operationId: getOffer
+      security:
+        - Bearer: []
+      parameters:
+        - name: origin
+          in: query
+          description: The GPS coordinates of the departure "lat,long"
+          required: true
+          type: string
+        - name: destination
+          in: query
+          description: The GPS coordiantes of the arrival "lat,long"
+          required: true
+          type: string
+        - name: date
+          in: query
+          description: The date of the offer in ISO scheme
+          required: true
+          type: string
+          format: date-time
+      responses:
+        "200":
+          description: OK
+          schema: 
+            type: array
+            items: 
+              $ref: "#/definitions/Offer"
+                                
+          
+            # a pointer to a definition
+            
+  /offer/{idOperator}/{idOffer}:
+     get:
+      description: Get offer details with a unique idTrip
+      # used as the method name of the controller
+      operationId: getOfferDetails
+      security:
+        - Bearer: []
+      parameters:
+        - name: idOffer
+          in: path
+          description: The id of the offer
+          required: true
+          type: string
+        - name: idOperator
+          in: path
+          description: The id of the operator
+          required: true
+          type: string
+     
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: "#/definitions/OfferDetailed"
+              
+     put:
+      description: Update number of available seats
+      # used as the method name of the controller
+      operationId: putOffer
+      security:
+        - Bearer: []
+      parameters:
+        - name: idOffer
+          in: path
+          description: The id of the offer
+          required: true
+          type: string
+        - name: idOperator
+          in: path
+          description: The id of the operator
+          required: true
+          type: string
+        - in: body
+          name: offerSeats
+          required: true
+          description: A JSON object containing offer
+          schema:
+            $ref: "#/definitions/OfferUpdate"
+     
+      responses:
+        "200":
+          description: OK
+          schema:
+            # a pointer to a definition
+            $ref: "#/definitions/Offer"
+       
+      
+  /swagger:
+    x-swagger-pipe: swagger_raw
+# complex objects have schema definitions
+    
+  /message:
+    post:
+      description: Send a message
+      # used as the method name of the controller
+      operationId: sendMessage
+      consumes:
+        - application/json
+      security:
+        - Bearer: []
+      parameters:
+        - in: body
+          name: message
+          required: true
+          description: A JSON object containing a message
+          schema:
+            $ref: "#/definitions/Message"
+      responses:    
+        "200":
+              description: OK
+              schema:
+                description: A JSON object containing the idMessage
+                example:
+                  {
+                    "idMessage": "jgj54qw"
+                  }  
+          
+  /message/{idMessage}:
+    put:
+      description: Update message status
+      operationId: updateMessageStatus
+      security:
+        - Bearer: []
+      parameters:
+        - in: body
+          name: status
+          required: true
+          description: the new status of the message
+          schema:
+            $ref: "#/definitions/MessageStatus"
+        - in: path
+          name: idMessage
+          required: true
+          type: string
+          description: the id of the message
+      responses:
+        "200":
+          description: OK
+          
+        
+      
+  /transaction:
+    post:
+      description: Push a transaction
+      # used as the method name of the controller
+      operationId: pushTransaction
+      consumes:
+        - application/json
+      security:
+        - Bearer: []
+      parameters:
+        - in: body
+          name: transaction
+          required: true
+          description: A JSON object containing transaction
+          schema:
+            $ref: "#/definitions/PostTransactionBody"
+             
+              
+      responses:
+        "201":
+          description: Created
+          schema:
+            description: A JSON object containing the idTransaction
+            example:
+              {
+                "idTransaction": "A3qgh67"
+              }
+       
+  /transaction/{idOperator}/{idOffer}: 
+     get:
+      description: Get the last status of all the inscriptions of a specific offer
+      # used as the method name of the controller
+      operationId: getTransactions
+      parameters:
+        - name: idOffer
+          in: path
+          description: The id of the offer
+          required: true
+          type: string
+        - name: idOperator
+          in: path
+          description: The id of the operator
+          required: true
+          type: string
+          enum: [op1,op2]
+        
+      responses:
+        "200":
+          description: OK
+          schema: 
+            type: array
+            items: 
+              $ref: "#/definitions/Transaction"
+            
+  /transaction/{idTransaction}:
+     get:
+      description: Get the last transaction of a passenger of a specific offer
+      # used as the method name of the controller
+      operationId: getTransactionPassenger
+      parameters:
+        - name: idTransaction
+          in: path
+          description: The id of the transaction
+          required: true
+          type: string
+        
+     
+      responses:
+        "200":
+          description: OK
+          schema:
+            # a pointer to a definition
+            $ref: "#/definitions/Transaction"
+
+  /proof:
+    post:
+      description: Upgrade a proof class.
+      # used as the method name of the controller
+      operationId: upgradeProof
+      consumes:
+        - application/json
+      security:
+        - Bearer: []
+      parameters:
+        - in: body
+          name: proof
+          required: true
+          description: A JSON object containing transaction and gps.
+          schema:
+            $ref: "#/definitions/PostProofBody"
+      responses:
+        "200":
+          description: OK
+
+  /proof/{idTrip}:
+     get:
+      description: Get the proofs of a specific trip.
+      # used as the method name of the controller
+      operationId: getProofByTrip
+      consumes:
+        - application/json
+      security:
+        - Bearer: []
+      parameters:
+        - name: idTrip
+          in: path
+          description: The id of the trip.
+          required: true
+          type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            # a pointer to a definition
+            $ref: "#/definitions/Proof"
+
+  /proof/{idTrip}/{idOperator}:
+     get:
+      description: Get the proofs of a specific trip by operator.
+      # used as the method name of the controller
+      operationId: getProofByTripOperator
+      consumes:
+        - application/json
+      security:
+        - Bearer: []
+      parameters:
+        - name: idTrip
+          in: path
+          description: The id of the trip.
+          required: true
+          type: string
+        - name: idOperator
+          in: path
+          description: The id of the operator.
+          required: true
+          type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            # a pointer to a definition
+            $ref: "#/definitions/Proof"
+
+  /kms:
+    post:
+      description: Create key pair.
+      # used as the method name of the controller
+      operationId: createKeys
+      consumes:
+        - application/json
+      security:
+        - Bearer: []
+      parameters:
+        - in: body
+          name: proof
+          required: true
+          description: A JSON object containing idOperator.
+          schema:
+            $ref: "#/definitions/PostKmsKeysBody"
+      responses:
+        "200":
+          description: OK
+          
+  /kms/rekey:
+    post:
+      description: Create re-encryption key.
+      # used as the method name of the controller
+      operationId: createRekey
+      consumes:
+        - application/json
+      security:
+        - Bearer: []
+      parameters:
+        - in: body
+          name: proof
+          required: true
+          description: A JSON object containing operators delegator/delegatee and keys.
+          schema:
+            $ref: "#/definitions/PostKmsRekeyBody"
+      responses:
+        "200":
+          description: OK
+          
+  /kms/{idOperator}:
+    get:
+      description: Get keys for an operator.
+      # used as the method name of the controller
+      operationId: getkeysById
+      consumes:
+        - application/json
+      security:
+        - Bearer: []
+      parameters:
+        - name: idOperator
+          in: path
+          description: The id of the operator
+          required: true
+          type: string
+      responses:
+        "200":
+          description: OK
+
+definitions:
+  Offer:
+    required:
+      - idOffer
+      - idOperator
+      - idDriver
+      - driverShortname
+      - origin
+      - destination
+      - departureGPS
+      - arrivalGPS
+      - date
+      - price
+      - availableSeats
+    properties:
+      idTrip:
+        type: string
+      idOffer:
+        type: string
+      idDriver:
+        type: string
+      driverShortname:
+        type: string
+      origin:
+        type: string
+      destination:
+        type: string
+      departureGPS:
+        type: string
+      arrivalGPS:
+        type: string
+      date:
+        type: string
+        format: date-time
+      idOperator:
+        type: string
+        enum: [op1,op2]
+      price:
+        type: number
+      availableSeats:
+        type: number
+        minimum: 1
+        maximum: 4 
+  
+  OfferDetailed:
+    required:
+      - offer
+            
+    properties:
+      offer:
+        allOf:
+          - $ref: "#/definitions/Offer" 
+      driver:
+        allOf:
+          - $ref: "#/definitions/Driver"
+      trip:
+        allOf:
+          - $ref: "#/definitions/Trip"
+      vehicule:
+        allOf:
+          - $ref: "#/definitions/Vehicle"
+      
+     
+  Driver:
+    properties:
+      photo:
+        type: string
+      age:
+        type: number
+      note:
+        type: number
+      identityVerified:
+        type: boolean
+      phoneVerified:
+        type: boolean
+      emailVerified:
+        type: boolean
+      lang:
+        type: array
+        items:
+         type: string
+  
+  Trip:
+   properties:
+      distance:
+        type: string
+      duration:
+        type: string
+      hasHighways:
+        type: boolean
+      departure:
+        type: object
+      arrival:
+        type: object
+      path:
+        type: string
+        
+  Vehicle:
+    properties:
+      photo:
+        type: string
+      brand:
+        type: string
+      model:
+        type: string
+      color:
+        type: string
+      availableSeats:
+        type: number
+        minimum: 1
+        maximum: 4
+          
+  OfferUpdate:
+    type: object
+    required:
+      - seats
+    properties:
+      seats:
+        type: number
+        minimum: 1
+        maximum: 4
+
+  Message:
+    required:
+      - idOffer
+      - idOperator
+      - idPassenger
+      - passengerShortname
+      - idOperatorPassenger
+      - messageTxt
+      - created_at
+    properties:
+      idOffer:
+        type: string
+      idOperator:
+        type: string
+        enum: [op1,op2]
+      idPassenger:
+        type: string 
+      passengerShortname:
+        type: string
+      idOperatorPassenger:
+        type: string
+        enum: [op1,op2]
+      messageTxt:
+        type: string
+      created_at:
+        type: number
+        
+  MessageStatus:
+      required:
+        - state
+      properties:
+        state:
+          type: string
+          enum: [seen,deleted,sent]
+
+  Transaction:
+    required:
+      - idOffer
+      - idOperator
+      - idPassenger
+      - passengerShortname
+      - idOperatorPassenger
+      - type
+      
+    properties:
+      idTransaction:
+        type: string
+      idOffer:
+        type: string
+      idOperator:
+        type: string
+        enum: [op1,op2]
+      idPassenger:
+        type: string
+      passengerShortname:
+        type: string
+      idOperatorPassenger:
+        type: string
+        enum: [op1,op2]
+      type:
+        type: string
+        enum: [INSCRIPTION,CONFIRMATION,REJECTION,PAYEMENT]
+      created_at:
+        type: number
+
+  PostTransactionBody:
+    required:
+      - idOffer
+      - idOperator
+      - idPassenger
+      - passengerShortname
+      - idOperatorPassenger
+      - type
+      
+    properties:
+      idOffer:
+        type: string
+      idOperator:
+        type: string
+        enum: [op1,op2]
+      idPassenger:
+        type: string
+      passengerShortname:
+        type: string
+      idOperatorPassenger:
+        type: string
+        enum: [op1,op2]
+      type:
+        type: string
+        enum: [INSCRIPTION,CONFIRMATION,REJECTION,PAYEMENT]
+    example:
+                idOffer: 23568
+                idOperator: op1
+                idPassenger: 56984
+                passengerShortname: BBob
+                idOperatorPassenger: op2
+                type: INSCRIPTION
+
+  Proof:
+    properties:
+      idProof:
+        type: string
+      idTrip:
+        type: string
+      idDriver:
+        type: string
+      driverShortname:
+        type: string
+      idOperatorDriver:
+        type: string
+        enum: [op1,op2]
+      idPassenger:
+        type: string
+      passengerShortname:
+        type: string
+      idOperatorPassenger:
+        type: string
+        enum: [op1,op2]
+      origin:
+        type: string
+      destination:
+        type: string
+      date:
+        type: string
+        format: date-time
+
+  PostProofBody:
+    required:
+      - idOffer
+      - idOperator
+      - type
+      - gps
+      - phone
+
+    properties:
+      idOffer:
+        type: string
+      idOperator:
+        type: string
+        enum: [op2,op1]
+      type:
+        type: string
+        enum: [TRIP_STARTED, TRIP_ENDED]
+      gps:
+        type: string
+      phone:
+        type: string
+      idPassenger:
+        type: string
+      passengerShortname:
+        type: string
+      idOperatorPassenger:
+        type: string
+        enum: [op2,op1]
+    example:
+                idOffer: 23568
+                idOperator: op1
+                idPassenger: 56984
+                passengerShortname: BBob
+                idOperatorPassenger: op2
+                type: TRIP_STARTED
+                gps: "125, 678"
+                
+  PostKmsKeysBody:
+    required:
+      - idOperator
+
+    properties:
+      idOperator:
+        type: string
+        enum: [op2,op1]
+    example:
+                idOperator: op1
+
+  PostKmsRekeyBody:
+    required:
+      - idOperatorDelegator
+      - idOperatorDelegatee
+
+    properties:
+      idOperatorDelegator:
+        type: string
+        enum: [op2,op1]
+      idOperatorDelegatee:
+        type: string
+        enum: [op1,op2]

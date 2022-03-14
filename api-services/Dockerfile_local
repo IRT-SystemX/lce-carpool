@@ -1,0 +1,21 @@
+FROM keymetrics/pm2:10-alpine AS base
+RUN apk update && apk add python g++ make && rm -rf /var/cache/apk/*
+RUN mkdir -p /var/app
+ADD package.json /var/app
+
+# use changes to package.json to force Docker not to use the cache
+# when we change our application's nodejs dependencies:
+
+# --- Dependencies ---
+FROM base AS dependencies
+COPY package.json /tmp/
+RUN cd /tmp && npm install --only=production
+RUN cp -a /tmp/node_modules /tmp/prod_node_modules
+
+# --- Release ---
+FROM base AS release
+MAINTAINER Maroua Meddeb <maroua.meddeb@irt-systemx.fr>
+WORKDIR /var/app
+ADD ecosystem.config.js .env.defaults .env.schema ./
+COPY --from=dependencies /tmp/prod_node_modules ./node_modules
+COPY src /var/app/src

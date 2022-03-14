@@ -1,0 +1,30 @@
+version: "3"
+services:
+  nest:
+    container_name: proxy
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    env_file:
+      - .env
+    links:
+      - mongo
+    networks:
+      - bnc_network
+  mongo:
+    image: mongo:latest
+    container_name: proxy_mongo
+    ports:
+      - "27019:27017"
+    environment:
+      MONGO_INITDB_DATABASE: nest
+    networks:
+      - bnc_network
+networks:
+  bnc_network:
+     external: true

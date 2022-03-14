@@ -1,0 +1,22 @@
+version: '3.4'
+
+services:
+  carpooling-rest-api:
+    container_name: carpooling.lce.prod
+    image: harbor.irtsysx.fr/lce/carpooling_rest_api:latest
+    command: [ "pm2-runtime", "start", "/var/app/ecosystem.config.js", "--only", "carpooling_docker"]
+    volumes:
+      - /home/ubuntu/stores/creds:/var/app/src/config/creds
+    ports:
+      - "4000:4000"
+    env_file:
+      - .env
+    depends_on:
+      - carpooling_mongodb
+    restart: on-failure
+
+  carpooling_mongodb:
+    container_name: carpooling_mongodb
+    image: mongo
+    ports:
+      - "27017:27017"

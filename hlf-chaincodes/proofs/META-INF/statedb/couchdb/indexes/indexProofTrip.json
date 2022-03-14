@@ -1,0 +1,9 @@
+{
+    "index":{
+      "fields":["docType", "idTrip"]
+    },
+    "ddoc":"indexProofTripDoc",
+    "name":"indexProofTrip",
+    "type":"json"
+  }
+  

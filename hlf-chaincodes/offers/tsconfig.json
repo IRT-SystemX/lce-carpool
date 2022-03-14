@@ -1,0 +1,34 @@
+{
+  "compilerOptions": {
+    "rootDir": "./src",
+    "suppressImplicitAnyIndexErrors": true,
+    "noImplicitAny": true,
+    "sourceMap": true,
+    "allowJs": true,
+//    "inlineSourceMap": true,
+    "skipLibCheck": true, // fix issue the grpc protobuf call
+    "target": "es2017",
+    "module": "commonjs",
+    "declaration": false,
+    "outDir": "./dist",
+    "types": [
+      "@theledger/fabric-shim-crypto-types",
+      "@types/chai"
+    ],
+    "typeRoots": [
+      "./node_modules/@types"
+    ],
+    "lib": [
+      "es2015",
+      "es2016",
+      "dom"
+    ]
+  },
+  "include": [
+    "./src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "./tests/*.ts"
+  ]
+}
